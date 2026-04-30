@@ -183,6 +183,12 @@ export const authStyles = StyleSheet.create({
     fontSize: FontSize.small,
     fontWeight: '700',
   },
+  termCheckButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   checkIcon: {
     width: 24,
     height: 24,

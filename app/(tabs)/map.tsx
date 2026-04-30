@@ -988,5 +988,4 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Space.s2,
   },
   secretBtnText: { fontSize: 13, fontWeight: '700' },
-  ink500: Colors.ink500,
 });

@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  GestureResponderEvent,
   Pressable,
   Text,
   TextInput,
@@ -10,7 +11,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/tokens';
 import { Gender } from '../../services/auth';
-import { Agreements, TERMS } from './authFlowTypes';
+import { Agreements, TermId, TERMS } from './authFlowTypes';
 import { authStyles as styles } from './authFlowStyles';
 
 interface AuthTopBarProps {
@@ -82,7 +83,8 @@ interface TermsStepProps {
   allAgreed: boolean;
   requiredAgreed: boolean;
   onToggleAll: () => void;
-  onToggleTerm: (id: keyof Agreements) => void;
+  onToggleTerm: (id: TermId) => void;
+  onOpenTerm: (id: TermId) => void;
   onNext: () => void;
 }
 
@@ -92,8 +94,14 @@ export function TermsStep({
   requiredAgreed,
   onToggleAll,
   onToggleTerm,
+  onOpenTerm,
   onNext,
 }: TermsStepProps) {
+  const toggleTerm = (event: GestureResponderEvent, id: TermId) => {
+    event.stopPropagation();
+    onToggleTerm(id);
+  };
+
   return (
     <View style={styles.screen}>
       <Text style={styles.sectionTitle}>서비스 사용을 위해 약관에 동의해주세요</Text>
@@ -110,10 +118,16 @@ export function TermsStep({
         {TERMS.map(term => (
           <Pressable
             key={term.id}
-            onPress={() => onToggleTerm(term.id)}
+            onPress={() => onOpenTerm(term.id)}
             style={styles.termRow}
           >
-            <CheckIcon checked={agreements[term.id]} subtle />
+            <Pressable
+              onPress={(event) => toggleTerm(event, term.id)}
+              hitSlop={8}
+              style={styles.termCheckButton}
+            >
+              <CheckIcon checked={agreements[term.id]} subtle />
+            </Pressable>
             <Text style={styles.termText}>
               {term.required ? '[필수] ' : '[선택] '}
               {term.label}

@@ -82,7 +82,7 @@ export function AuthFlow() {
           <AuthTopBar
             progress={progress}
             totalSteps={2}
-            canGoBack={step !== 'intro'}
+            canGoBack
             onBack={goBack}
           />
         )}
@@ -98,6 +98,7 @@ export function AuthFlow() {
             requiredAgreed={requiredAgreed}
             onToggleAll={toggleAll}
             onToggleTerm={toggleTerm}
+            onOpenTerm={(id) => router.push({ pathname: '/terms/[id]', params: { id } })}
             onNext={() => setStep('profile')}
           />
         )}
