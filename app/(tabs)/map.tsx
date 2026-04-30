@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, TextInput, StyleSheet,
-  Modal, SafeAreaView, Dimensions, Pressable, FlatList,
+  Modal, Dimensions, Pressable, FlatList,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Space, FontSize, Radius } from '../../constants/tokens';
 import { RESTROOMS, FILTERS, REVIEWS, Restroom } from '../../constants/data';

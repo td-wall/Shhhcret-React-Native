@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
-  Switch as RNSwitch, SafeAreaView,
+  Switch as RNSwitch,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Space, FontSize, Radius } from '../../constants/tokens';
 import { Avatar, Chip } from '../../components/Primitives';

@@ -1,13 +1,15 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Space, Radius } from '../../constants/tokens';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors, Space } from '../../constants/tokens';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 
 // Custom tab bar that matches the design:
 // saved | SOS | MAP (center elevated) | profile | settings
 function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
+  const insets = useSafeAreaInsets();
   const tabs = [
     { routeName: 'saved',    label: '저장',   iconOn: 'bookmark' as const,          iconOff: 'bookmark-outline' as const },
     { routeName: 'sos',      label: 'SOS',    iconOn: 'radio' as const,              iconOff: 'radio-outline' as const,    isSOS: true },
@@ -17,7 +19,7 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
   ];
 
   return (
-    <View style={[styles.tabBar, { backgroundColor: 'rgba(255,255,255,0.94)', borderTopColor: Colors.hair }]}>
+    <View style={[styles.tabBar, { backgroundColor: 'rgba(255,255,255,0.94)', borderTopColor: Colors.hair, paddingBottom: insets.bottom }]}>
       {tabs.map(tab => {
         const routeIndex = state.routes.findIndex(r => r.name === tab.routeName);
         const focused    = state.index === routeIndex;
@@ -46,8 +48,7 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           return (
             <TouchableOpacity key={tab.routeName} onPress={onPress} activeOpacity={0.8}
               style={styles.tabItem}>
-              <Ionicons name={focused ? tab.iconOn : tab.iconOff} size={18} color={color}
-                style={{ strokeWidth: focused ? 2 : 1.6 }} />
+              <Ionicons name={focused ? tab.iconOn : tab.iconOff} size={18} color={color} />
               <Text style={[styles.sosLabel, { color, fontWeight: focused ? '800' : '700' }]}>{tab.label}</Text>
             </TouchableOpacity>
           );
@@ -87,7 +88,7 @@ const TAB_HEIGHT = 72;
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: 'row',
-    height: TAB_HEIGHT + (Platform.OS === 'ios' ? 0 : 0),
+    minHeight: TAB_HEIGHT,
     paddingBottom: 4,
     borderTopWidth: 1,
     alignItems: 'stretch',
