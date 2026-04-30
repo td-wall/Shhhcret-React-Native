@@ -3,8 +3,9 @@ import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Colors, Space, FontSize, Radius } from '../../constants/tokens';
-import { Avatar } from '../../components/Primitives';
+import { Colors, Space } from '../../constants/tokens';
+import { Avatar, Btn } from '../../components/Primitives';
+import { useAuth } from '../../contexts/AuthContext';
 
 const TABS = [
   { id: 'reviews', label: '내 리뷰' },
@@ -15,6 +16,9 @@ type TabId = typeof TABS[number]['id'];
 
 export default function ProfileScreen() {
   const [tab, setTab] = useState<TabId>('reviews');
+  const { session, signOut } = useAuth();
+  const user = session?.user;
+  const initial = user?.nickname?.trim().charAt(0) || '쉬';
 
   return (
     <SafeAreaView style={styles.container}>
@@ -22,7 +26,9 @@ export default function ProfileScreen() {
       <View style={styles.header}>
         <View style={{ width: 40 }} />
         <Text style={[styles.headerMono, { color: Colors.text3 }]}>MY · SHHH-CRET</Text>
-        <View style={{ width: 40 }} />
+        <TouchableOpacity onPress={signOut} activeOpacity={0.7} style={styles.logoutButton}>
+          <Text style={[styles.logoutText, { color: Colors.text3 }]}>로그아웃</Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 100 }}>
@@ -32,10 +38,10 @@ export default function ProfileScreen() {
           <Text style={styles.bgEmoji}>🤫</Text>
 
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: Space.s4 }}>
-            <Avatar initial="비" size={56} bg={Colors.ink25} fg={Colors.ink1000} />
+            <Avatar initial={initial} size={56} bg={Colors.ink25} fg={Colors.ink1000} />
             <View style={{ flex: 1 }}>
-              <Text style={[styles.heroName, { color: Colors.ink25 }]}>김비밀</Text>
-              <Text style={[styles.heroMono, { color: Colors.ink300 }]}>AGENT · LV.3 · 화장실 마니아</Text>
+              <Text style={[styles.heroName, { color: Colors.ink25 }]}>{user?.nickname ?? '쉬크릿 유저'}</Text>
+              <Text style={[styles.heroMono, { color: Colors.ink300 }]}>{user?.email ?? 'SHHH-CRET MEMBER'}</Text>
             </View>
           </View>
 
@@ -73,18 +79,19 @@ export default function ProfileScreen() {
         <View style={{ padding: Space.s4, gap: Space.s2 }}>
           {tab === 'reviews' && (
             <View style={styles.placeholder}>
-              <Text style={[styles.placeholderText, { color: Colors.text3 }]}>12개의 리뷰가 여기에 표시됩니다</Text>
+              <Text style={[styles.placeholderText, { color: Colors.text3 }]}>작성한 리뷰가 여기에 표시됩니다</Text>
             </View>
           )}
           {tab === 'tips' && (
             <View style={[styles.tipCard, { backgroundColor: Colors.ink1000 }]}>
               <Text style={[styles.tipMono, { color: Colors.ink300 }]}>SHHH-CRET TIP · 03</Text>
               <Text style={[styles.tipText, { color: Colors.ink25 }]}>
-                "성수 카페 거리 골목 안쪽 화장실은 4시 이후가 가장 한가해요."
+                성수 카페 거리 골목 안쪽 화장실은 4시 이후가 가장 한가해요.
               </Text>
               <Text style={[styles.tipFooter, { color: Colors.ink300 }]}>👍 28 · 🤫 14</Text>
             </View>
           )}
+          <Btn variant="ghost" full onPress={signOut}>로그아웃</Btn>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -98,6 +105,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: Space.s4, paddingVertical: Space.s3,
   },
   headerMono: { fontSize: 11, fontWeight: '800', letterSpacing: 2 },
+  logoutButton: {
+    width: 64,
+    height: 40,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  logoutText: {
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0,
+  },
   heroCard: {
     margin: Space.s4, padding: Space.s5,
     borderRadius: 16, overflow: 'hidden',

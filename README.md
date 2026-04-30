@@ -10,7 +10,17 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npm install
    ```
 
-2. Start the app
+2. Configure Kakao login
+
+   ```bash
+   EXPO_PUBLIC_API_BASE_URL=https://your-api.example.com
+   EXPO_PUBLIC_KAKAO_REST_API_KEY=your-kakao-rest-api-key
+   EXPO_PUBLIC_KAKAO_REDIRECT_URI=shhhcret://auth/kakao
+   ```
+
+   Register the same redirect URI in the Kakao Developers console.
+
+3. Start the app
 
    ```bash
    npx expo start

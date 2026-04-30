@@ -1,10 +1,11 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Space } from '../../constants/tokens';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { useAuth } from '../../contexts/AuthContext';
 
 // Custom tab bar that matches the design:
 // saved | SOS | MAP (center elevated) | profile | settings
@@ -67,8 +68,15 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
 }
 
 export default function TabLayout() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Redirect href="/" />;
+  }
+
   return (
     <Tabs
+      initialRouteName="map"
       tabBar={(props) => <CustomTabBar {...props} />}
       screenOptions={{ headerShown: false }}
     >
