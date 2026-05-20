@@ -7,10 +7,9 @@ import React, {
 } from 'react';
 import {
   AuthSession,
-  canUseKakaoOAuth,
+  canUseKakaoNative,
   Gender,
-  requestKakaoAuthCode,
-  signInWithKakaoAuthCode,
+  signInWithKakao,
 } from '../services/auth';
 
 interface SignInInput {
@@ -32,20 +31,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isSigningIn, setIsSigningIn] = useState(false);
 
-  const signInWithKakao = useCallback(async ({ nickname, gender }: SignInInput) => {
+  const signInWithKakaoHandler = useCallback(async ({ nickname, gender }: SignInInput) => {
     setIsSigningIn(true);
     try {
-      if (!canUseKakaoOAuth()) {
+      if (!canUseKakaoNative()) {
         setSession(createPreviewSession({ nickname, gender }));
         return;
       }
 
-      const authCode = await requestKakaoAuthCode();
-      const nextSession = await signInWithKakaoAuthCode({
-        authCode,
-        nickname: nickname.trim(),
-        gender,
-      });
+      const nextSession = await signInWithKakao({ nickname: nickname.trim(), gender });
       setSession(nextSession);
     } finally {
       setIsSigningIn(false);
@@ -62,9 +56,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     session,
     isAuthenticated,
     isSigningIn,
-    signInWithKakao,
+    signInWithKakao: signInWithKakaoHandler,
     signOut,
-  }), [isAuthenticated, isSigningIn, session, signInWithKakao, signOut]);
+  }), [isAuthenticated, isSigningIn, session, signInWithKakaoHandler, signOut]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
