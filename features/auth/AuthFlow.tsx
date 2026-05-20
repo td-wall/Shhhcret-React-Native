@@ -91,6 +91,7 @@ export function AuthFlow() {
           <IntroStep onNext={() => setStep('terms')} />
         )}
 
+
         {step === 'terms' && (
           <TermsStep
             agreements={agreements}

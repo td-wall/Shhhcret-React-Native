@@ -33,15 +33,20 @@ export function AuthTopBar({ progress, totalSteps, canGoBack, onBack }: AuthTopB
       )}
 
       <View style={styles.progressDots}>
-        {Array.from({ length: totalSteps }, (_, index) => index + 1).map(item => (
-          <View
-            key={item}
-            style={[
-              styles.progressDot,
-              item <= progress && styles.progressDotActive,
-            ]}
-          />
-        ))}
+        {Array.from({ length: totalSteps }, (_, i) => i).map(i => {
+          const active = i + 1 === progress;
+          const past = i + 1 < progress;
+          return (
+            <View
+              key={i}
+              style={[
+                styles.progressDot,
+                active && styles.progressDotActive,
+                past && styles.progressDotPast,
+              ]}
+            />
+          );
+        })}
       </View>
 
       <View style={styles.backSlot} />
@@ -49,31 +54,73 @@ export function AuthTopBar({ progress, totalSteps, canGoBack, onBack }: AuthTopB
   );
 }
 
-export function IntroStep({ onNext }: { onNext: () => void }) {
+function ShhhMark({ size = 26 }: { size?: number }) {
   return (
-    <View style={styles.screen}>
-      <View style={styles.brandMark}>
-        <Ionicons name="male-female" size={34} color={Colors.ink1000} />
+    <View style={{
+      width: size, height: size, borderRadius: size / 2,
+      backgroundColor: Colors.ink1000,
+      alignItems: 'center', justifyContent: 'center',
+    }}>
+      <Text style={{
+        color: '#ffffff',
+        fontSize: size * 0.56,
+        fontWeight: '900',
+        includeFontPadding: false,
+      }}>ʃ</Text>
+    </View>
+  );
+}
+
+export function IntroStep({ onNext, onBrowse }: { onNext: () => void; onBrowse?: () => void }) {
+  const [loading, setLoading] = React.useState(false);
+
+  const handleKakao = () => {
+    setLoading(true);
+    // 실제로는 약관 동의 단계로 이동
+    setTimeout(() => { setLoading(false); onNext(); }, 300);
+  };
+
+  return (
+    <View style={styles.introScreen}>
+      {/* 브랜드 바 */}
+      <View style={styles.introBrandBar}>
+        <ShhhMark size={26} />
+        <Text style={styles.introBrandName}>Shhh-cret</Text>
+        <Text style={styles.introBrandMission}>MISSION · ACTIVE</Text>
       </View>
-      <Text style={styles.kicker}>SHHH-CRET</Text>
-      <Text style={styles.title}>비밀스런 화장실 리뷰</Text>
-      <Text style={styles.description}>
-        급한 순간에 믿고 찾을 수 있도록, 진짜 다녀온 사람들의 정보를 모아둘게요.
-      </Text>
-      <View style={styles.previewCard}>
-        <View style={styles.previewHeader}>
-          <View>
-            <Text style={styles.previewTitle}>근처 쉬크릿</Text>
-            <Text style={styles.previewSub}>깨끗함 4.7 · 향 4.3</Text>
-          </View>
-          <Ionicons name="lock-closed" size={18} color={Colors.ink25} />
-        </View>
-        <View style={styles.previewLines}>
-          <View style={[styles.previewLine, { width: '86%' }]} />
-          <View style={[styles.previewLine, { width: '58%' }]} />
-        </View>
+
+      {/* 히어로 */}
+      <View style={styles.introHero}>
+        <Text style={styles.introTitle}>
+          {'쉬크릿에\n합류할\n준비됐어요?'}
+        </Text>
+        <Text style={styles.introDesc}>
+          {'요원들이 발굴한 비밀 화장실,\n한가한 시간대, 현장 팁까지 —\n지금 바로 공유받으세요.'}
+        </Text>
       </View>
-      <KakaoButton label="카카오로 시작하기" onPress={onNext} />
+
+      {/* 하단 액션 */}
+      <View style={styles.introActions}>
+        <KakaoButton
+          label="카카오톡으로 로그인"
+          isLoading={loading}
+          onPress={handleKakao}
+        />
+
+        {onBrowse && (
+          <TouchableOpacity onPress={onBrowse} activeOpacity={0.7} style={styles.browseButton}>
+            <Text style={styles.browseText}>일단 구경만 할게요</Text>
+          </TouchableOpacity>
+        )}
+
+        <Text style={styles.introTermsNote}>
+          {'시작하면 '}
+          <Text style={styles.introTermsLink}>서비스 약관</Text>
+          {'과 '}
+          <Text style={styles.introTermsLink}>개인정보처리방침</Text>
+          {'에 동의해요.'}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -104,13 +151,16 @@ export function TermsStep({
 
   return (
     <View style={styles.screen}>
-      <Text style={styles.sectionTitle}>서비스 사용을 위해 약관에 동의해주세요</Text>
+      <Text style={styles.sectionTitle}>{'서비스 사용을 위해\n약관에 동의해주세요'}</Text>
       <Text style={styles.sectionSub}>
         필수 항목만 동의해도 쉬크릿을 바로 시작할 수 있어요.
       </Text>
 
-      <Pressable onPress={onToggleAll} style={styles.allAgreeRow}>
-        <CheckIcon checked={allAgreed} />
+      <Pressable onPress={onToggleAll} style={[
+        styles.allAgreeRow,
+        allAgreed && styles.allAgreeRowActive,
+      ]}>
+        <CheckIcon checked={allAgreed} large />
         <Text style={styles.allAgreeText}>전체 동의</Text>
       </Pressable>
 
@@ -126,7 +176,7 @@ export function TermsStep({
               hitSlop={8}
               style={styles.termCheckButton}
             >
-              <CheckIcon checked={agreements[term.id]} subtle />
+              <CheckIcon checked={agreements[term.id]} />
             </Pressable>
             <Text style={styles.termText}>
               {term.required ? '[필수] ' : '[선택] '}
@@ -174,28 +224,33 @@ export function ProfileStep({
 }: ProfileStepProps) {
   return (
     <View style={styles.screen}>
-      <Text style={styles.sectionTitle}>다녀온 기록에 표시될 정보를 알려주세요</Text>
+      <Text style={styles.sectionTitle}>{'요원 정보를\n등록해주세요'}</Text>
       <Text style={styles.sectionSub}>
-        닉네임은 리뷰와 스크랩 화면에서 사용돼요.
+        닉네임은 리뷰와 스크랩 화면에서 표시돼요.
       </Text>
 
       <View style={styles.formGroup}>
-        <Text style={styles.label}>닉네임</Text>
+        <Text style={styles.monoLabel}>CODENAME</Text>
         <TextInput
           value={nickname}
-          onChangeText={onNicknameChange}
+          onChangeText={(v) => onNicknameChange(v.slice(0, 16))}
           placeholder="예: 화장실 탐험가"
           placeholderTextColor={Colors.text3}
           autoCapitalize="none"
           autoCorrect={false}
           maxLength={16}
-          style={styles.input}
+          style={[styles.input, nickname.length > 0 && styles.inputActive]}
         />
-        <Text style={styles.helper}>16자 이하로 입력해주세요</Text>
+        <View style={styles.inputHelperRow}>
+          <Text style={styles.helper}>16자 이하로 입력해주세요</Text>
+          <Text style={[styles.helper, nickname.length > 12 && styles.helperWarn]}>
+            {nickname.length}/16
+          </Text>
+        </View>
       </View>
 
       <View style={styles.formGroup}>
-        <Text style={styles.label}>성별</Text>
+        <Text style={styles.monoLabel}>GENDER</Text>
         <View style={styles.segmented}>
           <GenderButton
             label="여성"
@@ -223,12 +278,20 @@ export function ProfileStep({
       )}
 
       <View style={styles.bottomArea}>
-        <KakaoButton
-          label="카카오 인증하고 시작하기"
-          onPress={onSubmit}
+        <TouchableOpacity
+          onPress={canSubmit ? onSubmit : undefined}
           disabled={!canSubmit || isSubmitting}
-          isLoading={isSubmitting}
-        />
+          activeOpacity={0.85}
+          style={[styles.primaryButton, (!canSubmit || isSubmitting) && styles.disabledButton]}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color={Colors.ink25} />
+          ) : (
+            <Text style={styles.primaryButtonText}>
+              {canSubmit ? '쉬크릿 시작하기 🤫' : '코드네임을 입력해주세요'}
+            </Text>
+          )}
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -248,15 +311,15 @@ function KakaoButton({
   return (
     <TouchableOpacity
       onPress={onPress}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       activeOpacity={0.85}
-      style={[styles.kakaoButton, disabled && styles.disabledButton]}
+      style={[styles.kakaoButton, (disabled || isLoading) && styles.kakaoButtonLoading]}
     >
       {isLoading ? (
-        <ActivityIndicator color={Colors.ink1000} />
+        <Text style={styles.kakaoEncryptingText}>ENCRYPTING...</Text>
       ) : (
         <>
-          <Text style={styles.kakaoIcon}>K</Text>
+          <KakaoLogo />
           <Text style={styles.kakaoButtonText}>{label}</Text>
         </>
       )}
@@ -264,16 +327,26 @@ function KakaoButton({
   );
 }
 
-function CheckIcon({ checked, subtle }: { checked: boolean; subtle?: boolean }) {
+function KakaoLogo() {
+  return (
+    <Text style={{ fontSize: 18, lineHeight: 20 }}>💬</Text>
+  );
+}
+
+function CheckIcon({ checked, large }: { checked: boolean; large?: boolean }) {
+  const size = large ? 24 : 20;
   return (
     <View
       style={[
         styles.checkIcon,
-        subtle && styles.checkIconSubtle,
+        { width: size, height: size, borderRadius: size / 2 },
+        !checked && styles.checkIconUnchecked,
         checked && styles.checkIconChecked,
       ]}
     >
-      {checked && <Ionicons name="checkmark" size={15} color={Colors.ink25} />}
+      {checked && (
+        <Ionicons name="checkmark" size={size - 6} strokeWidth={3} color={Colors.ink25} />
+      )}
     </View>
   );
 }
