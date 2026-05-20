@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import {
   AuthSession,
+  canUseKakaoOAuth,
   Gender,
   requestKakaoAuthCode,
   signInWithKakaoAuthCode,
@@ -34,6 +35,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithKakao = useCallback(async ({ nickname, gender }: SignInInput) => {
     setIsSigningIn(true);
     try {
+      if (!canUseKakaoOAuth()) {
+        setSession(createPreviewSession({ nickname, gender }));
+        return;
+      }
+
       const authCode = await requestKakaoAuthCode();
       const nextSession = await signInWithKakaoAuthCode({
         authCode,
@@ -61,6 +67,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }), [isAuthenticated, isSigningIn, session, signInWithKakao, signOut]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+function createPreviewSession({ nickname, gender }: SignInInput): AuthSession {
+  return {
+    user: {
+      userId: 'preview-user',
+      email: 'preview@shhhcret.local',
+      nickname: nickname.trim() || '쉬크릿 유저',
+      gender: gender ?? 'FEMALE',
+      profileImageUrl: null,
+    },
+    accessToken: 'preview-access-token',
+    refreshToken: 'preview-refresh-token',
+  };
 }
 
 export function useAuth() {

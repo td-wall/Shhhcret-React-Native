@@ -39,6 +39,10 @@ const KAKAO_REST_API_KEY = process.env.EXPO_PUBLIC_KAKAO_REST_API_KEY ?? '';
 const KAKAO_REDIRECT_URI =
   process.env.EXPO_PUBLIC_KAKAO_REDIRECT_URI ?? Linking.createURL('auth/kakao');
 
+export function canUseKakaoOAuth() {
+  return !!API_BASE_URL && !!KAKAO_REST_API_KEY;
+}
+
 function assertConfigured(value: string, name: string) {
   if (!value) {
     throw new Error(`${name} 환경변수가 필요합니다.`);
