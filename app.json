@@ -10,10 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yangsooplus.shhhcret"
+      "bundleIdentifier": "com.tdwall.shhhcret"
     },
     "android": {
-      "package": "com.yangsooplus.shhhcret",
+      "package": "com.tdwall.shhhcret",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
