@@ -4,11 +4,13 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 
 function AuthGate() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
 
   useEffect(() => {
+    if (isLoading) return;
+
     const isInTabs = segments[0] === "(tabs)";
 
     if (!isAuthenticated && isInTabs) {
@@ -19,7 +21,7 @@ function AuthGate() {
     if (isAuthenticated && !isInTabs) {
       router.replace("/(tabs)/map");
     }
-  }, [isAuthenticated, router, segments]);
+  }, [isAuthenticated, isLoading, router, segments]);
 
   return (
     <Stack>

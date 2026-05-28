@@ -63,6 +63,10 @@ export function AuthFlow() {
       setError('닉네임을 입력해주세요.');
       return;
     }
+    if (!gender) {
+      setError('성별을 선택해주세요.');
+      return;
+    }
 
     try {
       await signInWithKakao({ nickname, gender });
