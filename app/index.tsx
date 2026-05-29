@@ -1,15 +1,13 @@
-import { Text, View } from "react-native";
+import { Redirect } from 'expo-router';
+import { useAuth } from '../contexts/AuthContext';
+import { AuthFlow } from '../features/auth/AuthFlow';
 
-export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
-  );
+export default function AuthEntryScreen() {
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return <Redirect href="/(tabs)/map" />;
+  }
+
+  return <AuthFlow />;
 }

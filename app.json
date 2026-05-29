@@ -9,9 +9,11 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tdwall.shhhcret"
     },
     "android": {
+      "package": "com.tdwall.shhhcret",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -27,6 +29,14 @@
     },
     "plugins": [
       "expo-router",
+      "expo-dev-client",
+      [
+        "@react-native-seoul/kakao-login",
+        {
+          "kakaoAppKey": "d5c5e783e6cb7803692b25e4bf1a6152",
+          "kotlinVersion": "2.1.21"
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -38,7 +48,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
