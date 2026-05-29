@@ -71,3 +71,23 @@ export async function signInWithKakao({
     isJoined: payload.isJoined,
   };
 }
+
+export async function refreshTokens(refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+  const response = await fetch(`${API_BASE_URL}/v1/auth/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refreshToken }),
+  });
+
+  if (!response.ok) {
+    throw new Error('토큰 갱신 실패');
+  }
+
+  const payload = await response.json();
+
+  if (!payload?.accessToken || !payload?.refreshToken) {
+    throw new Error('토큰 갱신 응답이 올바르지 않습니다.');
+  }
+
+  return { accessToken: payload.accessToken, refreshToken: payload.refreshToken };
+}

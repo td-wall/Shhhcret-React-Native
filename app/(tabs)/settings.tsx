@@ -175,6 +175,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
+
         <Text style={[styles.footerMono, { color: Colors.text3 }]}>🤫 SHHH—CRET · MADE WITH SECRETS</Text>
       </ScrollView>
     </SafeAreaView>
@@ -278,7 +279,7 @@ function SimpleSlider({ min, max, step, value, onChange }: { min: number; max: n
         <View style={[styles.trackFill, { width: `${pct * 100}%` as any, backgroundColor: Colors.ink1000 }]} />
       </View>
       {/* Step buttons */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: Space.s2, paddingTop: Space.s2 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: Space.s2, paddingTop: Space.s2 }}>
         {ticks.filter((_, i) => i % 4 === 0 || ticks[i] === value || ticks[i] === max).map(t => (
           <TouchableOpacity key={t} onPress={() => onChange(t)} activeOpacity={0.7}
             style={[styles.tickBtn, {
@@ -290,7 +291,7 @@ function SimpleSlider({ min, max, step, value, onChange }: { min: number; max: n
             </Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+      </View>
     </View>
   );
 }
