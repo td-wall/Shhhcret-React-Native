@@ -1,37 +1,71 @@
-# Welcome to your Expo app 👋
+# Shhhcret React Native
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## 시작하기
 
-## Get started
+### 1. 의존성 설치
 
-1. Install dependencies
+```bash
+npm install
+```
 
-   ```bash
-   npm install
-   ```
+### 2. 환경변수 설정
 
-2. Configure Kakao login
+프로젝트 루트에 `.env.local` 파일 생성:
 
-   ```bash
-   EXPO_PUBLIC_API_BASE_URL=https://your-api.example.com
-   EXPO_PUBLIC_KAKAO_REST_API_KEY=your-kakao-rest-api-key
-   EXPO_PUBLIC_KAKAO_REDIRECT_URI=shhhcret://auth/kakao
-   ```
+```
+EXPO_PUBLIC_API_BASE_URL=https://shhhcret-api.up.railway.app
+```
 
-   Register the same redirect URI in the Kakao Developers console.
+### 3. 앱 실행
 
-3. Start the app
+> **중요:** 이 프로젝트는 카카오 네이티브 SDK를 사용하기 때문에 **Expo Go 앱으로 실행할 수 없습니다.**
+> 반드시 아래 방법으로 실행해야 합니다.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+#### Android
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+**사전 준비:**
+- [Android Studio](https://developer.android.com/studio) 설치
+- Android Studio에서 가상 기기(AVD) 하나 생성해두기 (Pixel 계열 추천)
+
+**실행:**
+
+```bash
+# 가상 기기 또는 연결된 실제 기기에서 실행
+npm run android
+```
+
+처음 실행 시 빌드에 5~10분 걸립니다. 이후 실행부터는 빠릅니다.
+
+---
+
+#### iOS (Mac 전용)
+
+**사전 준비:**
+- Xcode 설치 (App Store)
+- Xcode 설치 후 아래 명령어로 CocoaPods 설치:
+
+```bash
+sudo gem install cocoapods
+```
+
+**실행:**
+
+```bash
+npm run ios
+```
+
+처음 실행 시 빌드에 5~10분 걸립니다. 이후 실행부터는 빠릅니다.
+
+---
+
+#### 코드 수정 후 바로 반영
+
+앱이 실행 중인 상태에서 코드를 수정하면 자동으로 반영됩니다 (Fast Refresh).  
+반영이 안 될 때는 앱에서 **두 손가락으로 흔들기** → 개발자 메뉴 → **Reload** 선택.
+
+---
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
 
