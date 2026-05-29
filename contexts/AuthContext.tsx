@@ -4,6 +4,7 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import * as SecureStore from 'expo-secure-store';
@@ -11,6 +12,7 @@ import {
   AuthSession,
   canUseKakaoNative,
   Gender,
+  refreshTokens,
   signInWithKakao,
 } from '../services/auth';
 
@@ -29,6 +31,7 @@ interface AuthContextValue {
   isLoading: boolean;
   signInWithKakao: (input: SignInInput) => Promise<void>;
   signOut: () => void;
+  fetchWithAuth: (url: string, options?: RequestInit) => Promise<Response>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -37,6 +40,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // ref로 최신 session 접근 (fetchWithAuth 클로저에서 stale 방지)
+  const sessionRef = useRef<AuthSession | null>(null);
+  sessionRef.current = session;
 
   useEffect(() => {
     (async () => {
@@ -79,6 +86,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setSession(null);
   }, []);
 
+  const fetchWithAuth = useCallback(async (url: string, options: RequestInit = {}): Promise<Response> => {
+    const current = sessionRef.current;
+
+    const doFetch = (accessToken: string) =>
+      fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+    if (!current) {
+      return doFetch('');
+    }
+
+    const response = await doFetch(current.accessToken);
+
+    if (response.status !== 401) {
+      return response;
+    }
+
+    // 401 → 토큰 갱신 시도
+    try {
+      const refreshed = await refreshTokens(current.refreshToken);
+      const nextSession: AuthSession = { ...current, ...refreshed };
+      await saveSession(nextSession);
+      return doFetch(refreshed.accessToken);
+    } catch {
+      await signOut();
+      throw new Error('세션이 만료되었습니다. 다시 로그인해주세요.');
+    }
+  }, [saveSession, signOut]);
+
   const isAuthenticated = !!session;
 
   const value = useMemo<AuthContextValue>(() => ({
@@ -88,7 +130,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     signInWithKakao: signInWithKakaoHandler,
     signOut,
-  }), [isAuthenticated, isSigningIn, isLoading, session, signInWithKakaoHandler, signOut]);
+    fetchWithAuth,
+  }), [isAuthenticated, isSigningIn, isLoading, session, signInWithKakaoHandler, signOut, fetchWithAuth]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
