@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, Space, FontSize, Radius } from '../../constants/tokens';
 import { Avatar, Chip } from '../../components/Primitives';
 import { FILTERS } from '../../constants/data';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface SettingsState {
   autoLocate:     boolean;
@@ -26,6 +27,7 @@ interface SettingsState {
 }
 
 export default function SettingsScreen() {
+  const { signOut } = useAuth();
   const [vals, setVals] = useState<SettingsState>({
     autoLocate:    true,
     unit:          'm',
@@ -169,7 +171,7 @@ export default function SettingsScreen() {
 
         {/* Logout */}
         <View style={{ paddingHorizontal: Space.s4, paddingTop: Space.s5 }}>
-          <TouchableOpacity activeOpacity={0.7}
+          <TouchableOpacity activeOpacity={0.7} onPress={signOut}
             style={[styles.logoutBtn, { borderColor: Colors.border }]}>
             <Text style={[styles.logoutText, { color: Colors.text2 }]}>로그아웃</Text>
           </TouchableOpacity>

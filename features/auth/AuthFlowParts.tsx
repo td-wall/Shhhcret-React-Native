@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
   ActivityIndicator,
@@ -8,11 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '../../constants/tokens';
 import { Gender } from '../../services/auth';
-import { Agreements, TermId, TERMS } from './authFlowTypes';
 import { authStyles as styles } from './authFlowStyles';
+import { Agreements, TermId, TERMS } from './authFlowTypes';
 
 interface AuthTopBarProps {
   progress: number;
@@ -261,11 +261,6 @@ export function ProfileStep({
             label="남성"
             selected={gender === 'MALE'}
             onPress={() => onGenderChange('MALE')}
-          />
-          <GenderButton
-            label="선택 안 함"
-            selected={!gender}
-            onPress={() => onGenderChange(undefined)}
           />
         </View>
       </View>
