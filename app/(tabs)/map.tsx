@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, Space, FontSize, Radius } from '../../constants/tokens';
 import { RESTROOMS, FILTERS, REVIEWS, Restroom } from '../../constants/data';
 import { Chip, Stars, Tag, Btn, Avatar } from '../../components/Primitives';
+import AddReviewModal from '../../components/AddReviewModal';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
@@ -204,6 +205,8 @@ export default function MapTabScreen() {
         setFilters={setFilters}
         onClose={() => setShowFilter(false)}
       />
+
+      <AddReviewModal visible={screen === 'addReview'} onClose={() => setScreen('map')} />
     </View>
   );
 }
